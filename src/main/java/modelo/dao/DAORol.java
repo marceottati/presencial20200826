@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-package modelo;
+package modelo.dao;
 
 import inicio.Conexion;
 import java.sql.PreparedStatement;

@@ -7,8 +7,10 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Observable;
 
-public class Persona {
+public class Persona extends Observable {
+
     private int id;
     private String documento;
     private String apellido1;
@@ -16,16 +18,15 @@ public class Persona {
     private String nombre1;
     private String nombre2;
     private Date fechaNac;
-    private String clave;
+    private String pass;
     private String email;
     private Rol rol;
-    //private String rolDescripcion;
 
     public Persona() {
     }
 
     public Persona(String documento, String apellido1, String apellido2, String nombre1, String nombre2, Date fechaNac,
-            String clave, String email, Rol rol) {
+            String pass, String email, Rol rol) {
 
         this.documento = documento;
         this.apellido1 = apellido1;
@@ -33,23 +34,62 @@ public class Persona {
         this.nombre1 = nombre1;
         this.nombre2 = nombre2;
         this.fechaNac = fechaNac;
-        this.clave = clave;
+        this.pass = pass;
         this.email = email;
         this.rol = rol;
-        //--> Eliminado, sustituido por atributo de tipo Rol
-        //this.rolNombre = rolNombre;
-        //this.rolDescripcion = rolDescripcion;
 
     }
 
-  
-    public int getId(){
+    /**
+     * Obtener persona desde base de datos
+     *
+     * @return Persona en caso que se encuentre
+     */
+    public Persona obtenerDesdeBD() throws Exception {
+        Connection conexion = Conexion.getConnection();
+        try {
+            System.out.println("cosito ----------------------");
+            PreparedStatement miConsulta = conexion.prepareStatement(
+                    "SELECT p.*, r.ID ROL_ID, r.NOMBRE ROL_NOMBRE, r.DESCRIPCION ROL_DESCRIPCION "
+                            + "FROM PERSONAS p INNER JOIN ROLES r ON p.ROL_ID = r.ID "
+                            + "WHERE p.EMAIL = ? AND p.CLAVE = ?"
+            );
+            miConsulta.setString(1, this.email);
+            miConsulta.setString(2, this.pass);
+            ResultSet personasRS = miConsulta.executeQuery();
+            if (personasRS != null) {
+                while (personasRS.next()) {
+                    this.documento = personasRS.getString("DOCUMENTO");
+                    this.apellido1 = personasRS.getString("APELLIDO1");
+                    this.apellido2 = personasRS.getString("APELLIDO2");
+                    this.nombre1 = personasRS.getString("NOMBRE1");
+                    this.nombre2 = personasRS.getString("NOMBRE2");
+                    this.fechaNac = personasRS.getDate("FECHA_NAC");
+                    this.pass = personasRS.getString("PASS");
+                    this.email = personasRS.getString("EMAIL");
+                    Rol rol = new Rol(personasRS.getInt("ROL_ID"), personasRS.getString("ROL_NOMBRE"), personasRS.getString("ROL_DESCRIPCION"));
+                    this.rol = rol;
+                }
+                notifyObservers();
+                return this;
+            } else {                
+                System.out.println("ES NULO ----------------------");
+            }
+            return new Persona();
+        } catch (SQLException e) {
+            throw new Exception(e.getMessage() + " > " + e.getStackTrace());
+        }
+
+    }
+
+    public int getId() {
         return id;
     }
-    
-    public void setId(int id){
+
+    public void setId(int id) {
         this.id = id;
     }
+    
     public String getDocumento() {
         return documento;
     }
@@ -98,12 +138,12 @@ public class Persona {
         this.fechaNac = fechaNac;
     }
 
-    public String getClave() {
-        return clave;
+    public String getPass() {
+        return pass;
     }
 
-    public void setClave(String clave) {
-        this.clave = clave;
+    public void setPass(String pass) {
+        this.pass = pass;
     }
 
     public String getEmail() {
@@ -114,26 +154,17 @@ public class Persona {
         this.email = email;
     }
 
-    public Rol getRolNombre() {
+    public Rol getRol() {
         return rol;
     }
 
-    public void setRolNombre(Rol rol) {
+    public void setRol(Rol rol) {
         this.rol = rol;
     }
 
-   /* Quitado, ya que se agregó un atributo de tipo Rol
-    public String getRolDescripcion() {
-        return rolDescripcion;
-    }
-
-    public void setRolDescripcion(String rolDescripcion) {
-        this.rolDescripcion = rolDescripcion;
-    }*/
-
     @Override
     public String toString() {
-        return "Persona{" + "documento=" + documento + ", apellido1=" + apellido1 + ", apellido2=" + apellido2 + ", nombre1=" + nombre1 + ", nombre2=" + nombre2 + ", fechaNac=" + fechaNac + ", clave=" + clave + ", email=" + email + ", rolNombre=" + rol.getNombre() + ", rolDescripcion=" + rol.getDescripcion() + '}';
+        return "Persona{" + "documento=" + documento + ", apellido1=" + apellido1 + ", apellido2=" + apellido2 + ", nombre1=" + nombre1 + ", nombre2=" + nombre2 + ", fechaNac=" + fechaNac + ", pass=" + pass + ", email=" + email + ", rolNombre=" + rol.toString() + '}';
     }
 
 }

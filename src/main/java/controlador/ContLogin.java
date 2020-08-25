@@ -1,13 +1,13 @@
 package controlador;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import vista.VisLogin;
 import modelo.Persona;
 import modelo.Funcionalidad;
 import java.sql.Connection;
-import java.util.Observable;
-import java.util.Observer;
 
-public class ContLogin implements Observer{
+public class ContLogin implements ActionListener{
 
     private VisLogin vistaLogin;
     private Persona persona;
@@ -24,8 +24,15 @@ public class ContLogin implements Observer{
     public void mostrarLogin() {
         this.vistaLogin.setVisible(true);
     }
-
-    @Override
-    public void update(Observable o, Object obj){
+    
+    public void actionPerformed (ActionEvent e){
+        try {
+            this.persona.setEmail("xxxxx");
+            this.persona.setPass("xxxxxxxxx");
+            this.persona.obtenerDesdeBD();
+        } catch (Exception xe) {
+            System.out.println(xe.getMessage());
+        }
     }
+
 }

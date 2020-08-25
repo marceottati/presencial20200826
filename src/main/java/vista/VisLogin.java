@@ -8,19 +8,21 @@ package vista;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.util.Observable;
+import java.util.Observer;
 import javax.swing.ImageIcon;
 import javax.swing.JPanel;
-import org.w3c.dom.css.ViewCSS;
 
 /**
  *
  * @author usuario
  */
-public class VisLogin extends Observable implements ViewCSS {
-
-    private String email;
-    private String pass;
+public class VisLogin extends javax.swing.JFrame implements Observer {
     private FondoPanel fondo = new FondoPanel();
+
+    @Override
+    public void update(Observable o, Object obj) {
+        return;
+    }
 
     /**
      * Creates new form Login
@@ -79,7 +81,7 @@ public class VisLogin extends Observable implements ViewCSS {
                         .addComponent(lbl_pass)
                         .addComponent(lbl_email)
                         .addComponent(txt_pass, javax.swing.GroupLayout.PREFERRED_SIZE, 397, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(86, Short.MAX_VALUE))
+                .addContainerGap(71, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -101,8 +103,7 @@ public class VisLogin extends Observable implements ViewCSS {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btn_loginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_loginActionPerformed
-        this.email = txt_email.getText();
-        this.pass = txt_pass.getText();
+        
     }//GEN-LAST:event_btn_loginActionPerformed
 
     private void txt_emailActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_emailActionPerformed
@@ -146,7 +147,7 @@ public class VisLogin extends Observable implements ViewCSS {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btn_login;
+    public javax.swing.JButton btn_login;
     private javax.swing.JLabel lbl_email;
     private javax.swing.JLabel lbl_pass;
     private javax.swing.JTextField txt_email;
